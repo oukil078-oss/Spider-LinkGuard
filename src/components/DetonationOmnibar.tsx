@@ -8,10 +8,22 @@ interface DetonationOmnibarProps {
 
 const PRESETS = [
   {
-    label: 'M365 Phish Kit',
+    label: '🎣 Kaggle Phish',
     category: 'Phishing',
-    url: 'hxxps://login-microsoft365[.]security-update-token[.]xyz/auth/verify?session=live',
-    description: 'Credential harvester simulating Microsoft 365 login on suspicious .xyz TLD',
+    url: 'http://paypal-verification-account-sec.top/login.php',
+    description: 'Kaggle dataset credential harvester: spoofed brand + action keyword on suspicious TLD',
+  },
+  {
+    label: '☣️ Kaggle Dropper',
+    category: 'Malware',
+    url: 'http://192.168.1.5:8080/gate/bot_payload.exe',
+    description: 'Kaggle dataset malware dropper: direct IP addressing with port 8080 and .exe payload',
+  },
+  {
+    label: '🏴‍☠️ Kaggle Webshell',
+    category: 'Defacement',
+    url: 'http://vulnerable-cms.org/wp-content/plugins/c99.php',
+    description: 'Kaggle dataset defacement/backdoor: classic c99.php remote administration webshell',
   },
   {
     label: 'PayPаl Homoglyph',
@@ -20,22 +32,10 @@ const PRESETS = [
     description: 'Brand spoofing using Cyrillic lookalike "а" (U+0430)',
   },
   {
-    label: 'C2 High-Entropy',
-    category: 'C2 / Malware',
-    url: 'hxxp://185.220.101[.]5/beacon?payload=aW5qZWN0X3BheWxvYWRfYzJfYmVhY29uXzEyODkzODQ3MjM5ODQ3Mjg5Mzc0',
-    description: 'Direct IP addressing with base64 high-entropy beacon payload',
-  },
-  {
-    label: 'Evasive Redirect Chain',
-    category: 'Redirect',
-    url: 'https://httpbin.org/redirect-to?url=https%3A%2F%2Fhttpbin.org%2Fredirect-to%3Furl%3Dhttps%253A%252F%252Fhttpbin.org%252Fstatus%252F200',
-    description: 'Multi-tier redirect chain testing hop analysis and evasion tracking',
-  },
-  {
-    label: 'Benign Clean Domain',
+    label: '🛡️ Benign Clean',
     category: 'Clean',
-    url: 'https://github.com/torvalds/linux',
-    description: 'Verified benign repository with clean reputation',
+    url: 'https://en.wikipedia.org/wiki/Computer_security',
+    description: 'Verified benign reference URL matching clean operational profiles',
   },
 ];
 

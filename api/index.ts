@@ -12,6 +12,8 @@ import { ingestThreatIntelligence } from './_lib/threatIntel.js';
 import { trackRedirectChain } from './_lib/redirectTracker.js';
 import { executeDomSandbox } from './_lib/domSandbox.js';
 import { calculateThreatScore } from './_lib/scoringMatrix.js';
+import { classifyUrlWithMl } from './_lib/mlClassifier.js';
+import { lookupDatasetThreat } from './_lib/datasetIntel.js';
 import { generateDetectionRules, generateMarkdownReport } from './_lib/ruleExporter.js';
 import { scanCache } from './_lib/cache.js';
 
@@ -48,6 +50,8 @@ app.get(['/api/health', '/health'], (_req: Request, res: Response) => {
       redirectTracer: 'operational',
       domSandbox: 'operational',
       scoringMatrix: 'operational',
+      mlClassifier: 'operational',
+      datasetThreatIntel: 'operational',
       ruleExporter: 'operational',
     },
   });
@@ -180,17 +184,23 @@ app.post(['/api/scan', '/scan'], async (req: Request, res: Response) => {
     // 6. Headless DOM Sandbox & Form Parsing
     const domSandbox = await executeDomSandbox(redirectChain.finalUrl || norm.canonicalUrl);
 
-    // 7. Threat Scoring Matrix
+    // 7. Kaggle Lexical ML Classification & Dataset Intel Lookup
+    const mlClassification = classifyUrlWithMl(body.url, norm);
+    const datasetIntel = lookupDatasetThreat(body.url, norm);
+
+    // 8. Threat Scoring Matrix
     const scoring = calculateThreatScore(
       norm,
       homoglyphs,
       entropy,
       threatIntel,
       redirectChain,
-      domSandbox
+      domSandbox,
+      mlClassification,
+      datasetIntel
     );
 
-    // 8. Detection Rules Exporter
+    // 9. Detection Rules Exporter
     const rules = generateDetectionRules(
       norm.hostname,
       norm.pathname,
@@ -209,6 +219,8 @@ app.post(['/api/scan', '/scan'], async (req: Request, res: Response) => {
       threatIntel,
       redirectChain,
       domSandbox,
+      mlClassification,
+      datasetIntel,
       scoring,
       rules,
     };

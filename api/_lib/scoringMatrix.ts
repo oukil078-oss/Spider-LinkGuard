@@ -7,6 +7,8 @@ import {
   DomSandboxResult,
   ThreatScoreBreakdown,
   ScanVerdict,
+  MlClassification,
+  DatasetMatchResult,
 } from './types.js';
 
 export interface ScoringResult {
@@ -22,7 +24,9 @@ export function calculateThreatScore(
   entropy: EntropyAnalysis,
   threatIntel: ThreatIntelligence,
   redirects: RedirectChain,
-  dom: DomSandboxResult
+  dom: DomSandboxResult,
+  mlClassification?: MlClassification,
+  datasetIntel?: DatasetMatchResult
 ): ScoringResult {
   const breakdown: ThreatScoreBreakdown[] = [];
   let totalScore = 0;
@@ -160,6 +164,32 @@ export function calculateThreatScore(
     });
   }
 
+  // 7. Kaggle & Threat Dataset Intelligence Match
+  if (datasetIntel?.matched) {
+    const matchScore = datasetIntel.confidence >= 95 ? 65 : 50;
+    totalScore += matchScore;
+    breakdown.push({
+      category: 'Dataset Threat Intelligence',
+      score: matchScore,
+      weight: 65,
+      description: `Signature match [${datasetIntel.pattern}]: ${datasetIntel.description} (${datasetIntel.source}, Conf: ${datasetIntel.confidence}%)`,
+      severity: datasetIntel.confidence >= 95 ? 'critical' : 'malicious',
+    });
+  }
+
+  // 8. Lexical & Statistical ML Classifier (Kaggle sid321axn model)
+  if (mlClassification && mlClassification.predictedCategory !== 'benign') {
+    const mlPoints = Math.round((mlClassification.mlRiskScore / 100) * 55);
+    totalScore += mlPoints;
+    breakdown.push({
+      category: `Lexical ML Classifier (${mlClassification.modelName})`,
+      score: mlPoints,
+      weight: 55,
+      description: `Predicted ${mlClassification.predictedCategory.toUpperCase()} (${mlClassification.confidence}% conf, Risk ${mlClassification.mlRiskScore}/100). Indicators: ${mlClassification.featuresTriggered.join('; ')}`,
+      severity: mlClassification.mlRiskScore >= 80 ? 'critical' : mlClassification.mlRiskScore >= 50 ? 'malicious' : 'suspicious',
+    });
+  }
+
   const normalizedScore = Math.min(100, Math.max(0, totalScore));
 
   let verdict: ScanVerdict = 'BENIGN';
@@ -177,6 +207,27 @@ export function calculateThreatScore(
     verdict = 'SUSPICIOUS';
     verdictReason =
       'ELEVATED RISK: Anomalous characteristics detected (high entropy, suspicious TLD, or evasive hops).';
+  }
+
+  // Guard against false-negative BENIGN on offline links matching dataset or ML indicators
+  if (datasetIntel?.matched) {
+    const categoryName = datasetIntel.threatCategory ? datasetIntel.threatCategory.toUpperCase() : 'MALICIOUS';
+    if (datasetIntel.threatCategory === 'malware' || datasetIntel.confidence >= 95) {
+      if (verdict === 'BENIGN' || verdict === 'SUSPICIOUS') {
+        verdict = 'CRITICAL';
+      }
+      verdictReason = `CRITICAL THREAT: Verified ${categoryName} signature match (${datasetIntel.pattern || 'Dataset Match'}).`;
+    } else {
+      if (verdict === 'BENIGN' || verdict === 'SUSPICIOUS') {
+        verdict = 'MALICIOUS';
+      }
+      verdictReason = `HIGH RISK: Verified ${categoryName} threat signature from curated datasets.`;
+    }
+  } else if (mlClassification && mlClassification.predictedCategory !== 'benign' && mlClassification.confidence >= 70) {
+    if (verdict === 'BENIGN' || verdict === 'SUSPICIOUS') {
+      verdict = 'MALICIOUS';
+      verdictReason = `HIGH RISK (${mlClassification.predictedCategory.toUpperCase()}): Lexical ML classifier detected high-confidence weaponized patterns.`;
+    }
   }
 
   if (breakdown.length === 0) {

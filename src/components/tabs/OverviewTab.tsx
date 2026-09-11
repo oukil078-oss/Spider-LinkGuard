@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Server, AlertCircle, ShieldAlert, Cpu } from 'lucide-react';
+import { Globe, Server, AlertCircle, ShieldAlert, Cpu, Brain, Database, ShieldCheck } from 'lucide-react';
 import { ScanReport } from '../../types.ts';
 
 interface OverviewTabProps {
@@ -108,6 +108,158 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ report }) => {
           </div>
         </div>
       </div>
+
+      {/* Kaggle Lexical ML Classifier & Dataset Threat Intelligence Card */}
+      {report.mlClassification && (
+        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-400">
+                <Brain className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+                  LEXICAL ML CLASSIFIER & DATASET THREAT INTELLIGENCE
+                </h3>
+                <p className="text-[11px] font-mono text-slate-400">
+                  Trained on Kaggle Malicious URLs (651k samples) • URLhaus • OpenPhish • Zone-H
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-slate-400">PREDICTED CLASS:</span>
+              <span
+                className={`px-2.5 py-1 rounded text-xs font-mono font-bold uppercase tracking-wider border ${
+                  report.mlClassification.predictedCategory === 'malware'
+                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-lg shadow-rose-950/40'
+                    : report.mlClassification.predictedCategory === 'phishing'
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-lg shadow-amber-950/40'
+                    : report.mlClassification.predictedCategory === 'defacement'
+                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-lg shadow-purple-950/40'
+                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                }`}
+              >
+                {report.mlClassification.predictedCategory}
+              </span>
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-sky-300 font-bold">
+                {report.mlClassification.confidence}% CONF
+              </span>
+            </div>
+          </div>
+
+          {/* Dataset Signature Match Alert if present */}
+          {report.datasetIntel?.matched && (
+            <div className="mb-4 p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs font-mono flex items-start gap-3">
+              <Database className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-rose-300 font-bold uppercase tracking-wider">
+                    EXACT DATASET SIGNATURE MATCH:
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-rose-950/60 text-rose-200 border border-rose-800 font-semibold text-[11px]">
+                    {report.datasetIntel.pattern}
+                  </span>
+                  <span className="text-slate-400 text-[11px]">
+                    ({report.datasetIntel.source})
+                  </span>
+                </div>
+                <div className="text-slate-300 font-sans mt-1 text-xs">
+                  {report.datasetIntel.description}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Probability Distribution Meters */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+              <div className="flex justify-between text-[11px] font-mono mb-1.5">
+                <span className="text-slate-400">BENIGN</span>
+                <span className="text-emerald-400 font-bold">
+                  {report.mlClassification.classProbabilities.benign}%
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-emerald-400 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${report.mlClassification.classProbabilities.benign}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+              <div className="flex justify-between text-[11px] font-mono mb-1.5">
+                <span className="text-slate-400">PHISHING</span>
+                <span className="text-amber-400 font-bold">
+                  {report.mlClassification.classProbabilities.phishing}%
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-amber-400 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${report.mlClassification.classProbabilities.phishing}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+              <div className="flex justify-between text-[11px] font-mono mb-1.5">
+                <span className="text-slate-400">MALWARE</span>
+                <span className="text-rose-400 font-bold">
+                  {report.mlClassification.classProbabilities.malware}%
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-rose-400 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${report.mlClassification.classProbabilities.malware}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
+              <div className="flex justify-between text-[11px] font-mono mb-1.5">
+                <span className="text-slate-400">DEFACEMENT</span>
+                <span className="text-purple-400 font-bold">
+                  {report.mlClassification.classProbabilities.defacement}%
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-purple-400 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${report.mlClassification.classProbabilities.defacement}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Lexical Feature Anomaly Tags */}
+          <div>
+            <span className="text-[11px] font-mono text-slate-400 block mb-2 font-semibold">
+              EXTRACTED LEXICAL FEATURES & REASONING:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {report.mlClassification.featuresTriggered.length > 0 ? (
+                report.mlClassification.featuresTriggered.map((feat, i) => (
+                  <span
+                    key={i}
+                    className="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[11px] font-mono flex items-center gap-1.5"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                    {feat}
+                  </span>
+                ))
+              ) : (
+                <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  All 28 structural and lexical features fall within normal benign distributions.
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Threat Scoring Factors Table */}
       <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-xl">

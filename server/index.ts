@@ -13,6 +13,8 @@ import { ingestThreatIntelligence } from './engines/threatIntel.ts';
 import { trackRedirectChain } from './engines/redirectTracker.ts';
 import { executeDomSandbox } from './engines/domSandbox.ts';
 import { calculateThreatScore } from './engines/scoringMatrix.ts';
+import { classifyUrlWithMl } from './engines/mlClassifier.ts';
+import { lookupDatasetThreat } from './engines/datasetIntel.ts';
 import { generateDetectionRules, generateMarkdownReport } from './engines/ruleExporter.ts';
 
 dotenv.config();
@@ -44,7 +46,9 @@ app.get('/api/health', (_req: Request, res: Response) => {
       threatIntelAggregator: 'operational',
       redirectTracer: 'operational',
       domSandbox: 'operational',
-      threatScoringMatrix: 'operational',
+      scoringMatrix: 'operational',
+      mlClassifier: 'operational',
+      datasetThreatIntel: 'operational',
       ruleExporter: 'operational',
     },
   });
@@ -154,17 +158,23 @@ app.post('/api/scan', async (req: Request, res: Response) => {
     const finalDestinationUrl = redirectChain.finalUrl || norm.canonicalUrl;
     const domSandbox = await executeDomSandbox(finalDestinationUrl);
 
-    console.log(`[Scan ${scanId}] Step 5: Scoring Matrix`);
+    console.log(`[Scan ${scanId}] Step 5: Kaggle Lexical ML & Dataset Threat Lookup`);
+    const mlClassification = classifyUrlWithMl(body.url, norm);
+    const datasetIntel = lookupDatasetThreat(body.url, norm);
+
+    console.log(`[Scan ${scanId}] Step 6: Scoring Matrix`);
     const scoring = calculateThreatScore(
       norm,
       homoglyphs,
       entropy,
       threatIntel,
       redirectChain,
-      domSandbox
+      domSandbox,
+      mlClassification,
+      datasetIntel
     );
 
-    console.log(`[Scan ${scanId}] Step 6: Generating Detection Rules`);
+    console.log(`[Scan ${scanId}] Step 7: Generating Detection Rules`);
     const rules = generateDetectionRules(
       norm.hostname,
       norm.pathname,
@@ -183,6 +193,8 @@ app.post('/api/scan', async (req: Request, res: Response) => {
       threatIntel,
       redirectChain,
       domSandbox,
+      mlClassification,
+      datasetIntel,
       scoring,
       rules,
     };

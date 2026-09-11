@@ -186,6 +186,29 @@ export interface DetectionRules {
   yaraL: string;
 }
 
+export interface MlClassification {
+  predictedCategory: 'benign' | 'phishing' | 'malware' | 'defacement';
+  confidence: number;
+  mlRiskScore: number;
+  modelName: string;
+  featuresTriggered: string[];
+  classProbabilities: {
+    benign: number;
+    phishing: number;
+    malware: number;
+    defacement: number;
+  };
+}
+
+export interface DatasetMatchResult {
+  matched: boolean;
+  source?: string;
+  threatCategory?: 'malware' | 'phishing' | 'defacement' | 'suspicious';
+  pattern?: string;
+  confidence: number;
+  description?: string;
+}
+
 export interface ScanReport {
   id: string;
   timestamp: string;
@@ -198,6 +221,8 @@ export interface ScanReport {
   threatIntel: ThreatIntelligence;
   redirectChain: RedirectChain;
   domSandbox: DomSandboxResult;
+  mlClassification?: MlClassification;
+  datasetIntel?: DatasetMatchResult;
   scoring: {
     overallScore: number;
     verdict: ScanVerdict;
