@@ -1,4 +1,4 @@
-import { ThreatIntelligence, UrlNormalization } from './types';
+import { ThreatIntelligence, UrlNormalization } from './types.js';
 
 interface ThreatIntelOptions {
   virusTotalApiKey?: string;

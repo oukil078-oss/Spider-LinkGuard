@@ -7,7 +7,7 @@ import {
   DomSandboxResult,
   ThreatScoreBreakdown,
   ScanVerdict,
-} from './types';
+} from './types.js';
 
 export interface ScoringResult {
   overallScore: number;

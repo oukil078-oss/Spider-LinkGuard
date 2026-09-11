@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { ScanReport } from './types';
+import { ScanReport } from './types.js';
 
 const memoryCache = new Map<string, ScanReport>();
 const TMP_FILE = path.join('/tmp', 'spider_scans.json');

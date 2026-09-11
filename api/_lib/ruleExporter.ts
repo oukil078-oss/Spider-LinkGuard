@@ -1,4 +1,4 @@
-import { DetectionRules, ScanReport } from './types';
+import { DetectionRules, ScanReport } from './types.js';
 
 /**
  * Generates SIEM / IDS rules for detected malicious / suspicious URLs

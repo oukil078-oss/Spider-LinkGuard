@@ -4,7 +4,7 @@ import {
   HomoglyphAnalysis,
   HomoglyphCharacter,
   EntropyAnalysis,
-} from './types';
+} from './types.js';
 
 // Known confusable mappings (Cyrillic, Greek, lookalikes -> Latin)
 const CONFUSABLE_MAP: Record<string, { latin: string; name: string }> = {

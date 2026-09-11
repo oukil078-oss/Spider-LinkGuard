@@ -1,24 +1,33 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { ScanReport, ScanRequest } from './_lib/types';
+import { ScanReport, ScanRequest } from './_lib/types.js';
 import {
   normalizeUrl,
   analyzeHomoglyphs,
   analyzeEntropy,
   defangUrl,
   refangUrl,
-} from './_lib/normalizer';
-import { ingestThreatIntelligence } from './_lib/threatIntel';
-import { trackRedirectChain } from './_lib/redirectTracker';
-import { executeDomSandbox } from './_lib/domSandbox';
-import { calculateThreatScore } from './_lib/scoringMatrix';
-import { generateDetectionRules, generateMarkdownReport } from './_lib/ruleExporter';
-import { scanCache } from './_lib/cache';
+} from './_lib/normalizer.js';
+import { ingestThreatIntelligence } from './_lib/threatIntel.js';
+import { trackRedirectChain } from './_lib/redirectTracker.js';
+import { executeDomSandbox } from './_lib/domSandbox.js';
+import { calculateThreatScore } from './_lib/scoringMatrix.js';
+import { generateDetectionRules, generateMarkdownReport } from './_lib/ruleExporter.js';
+import { scanCache } from './_lib/cache.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// Middleware to normalize rewritten routes from Vercel: /api?_route=health -> /health
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  const route = req.query._route;
+  if (route && typeof route === 'string') {
+    req.url = '/' + route.replace(/^\//, '');
+  }
+  next();
+});
 
 /**
  * Health check & Engine telemetry
@@ -41,6 +50,25 @@ app.get(['/api/health', '/health'], (_req: Request, res: Response) => {
       scoringMatrix: 'operational',
       ruleExporter: 'operational',
     },
+  });
+});
+
+/**
+ * Root /api handler
+ */
+app.get(['/api', '/'], (_req: Request, res: Response) => {
+  return res.status(200).json({
+    service: 'Spider-LinkGuard API Engine',
+    status: 'operational',
+    endpoints: [
+      'GET /api/health',
+      'GET /api/scans',
+      'POST /api/scan',
+      'GET /api/scan/:id',
+      'GET /api/scan/:id/markdown',
+      'POST /api/defang',
+      'POST /api/refang',
+    ],
   });
 });
 
@@ -83,7 +111,7 @@ app.post(['/api/refang', '/refang'], (req: Request, res: Response) => {
  * Download Markdown Threat Dossier
  */
 app.get(['/api/scan/:id/markdown', '/scan/:id/markdown'], (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const report = scanCache.get(id);
 
   if (!report) {
@@ -103,7 +131,7 @@ app.get(['/api/scan/:id/markdown', '/scan/:id/markdown'], (req: Request, res: Re
  * Get specific scan report by ID
  */
 app.get(['/api/scan/:id', '/scan/:id'], (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const report = scanCache.get(id);
 
   if (!report) {

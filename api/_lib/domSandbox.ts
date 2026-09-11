@@ -4,7 +4,7 @@ import {
   DomForm,
   DomScript,
   NetworkRequestEntry,
-} from './types';
+} from './types.js';
 
 function getChromeExecutablePath(): string | undefined {
   if (process.env.VERCEL) return undefined;
