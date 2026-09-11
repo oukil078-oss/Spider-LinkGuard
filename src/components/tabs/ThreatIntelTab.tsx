@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, ShieldAlert, AlertTriangle, CheckCircle, ExternalLink, Activity } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, CheckCircle, Activity, ExternalLink } from 'lucide-react';
 import { ScanReport } from '../../types.ts';
 
 interface ThreatIntelTabProps {
@@ -12,107 +12,109 @@ export const ThreatIntelTab: React.FC<ThreatIntelTabProps> = ({ report }) => {
   return (
     <div className="space-y-6">
       {/* 4 Threat Feed Header Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Feed 1: VirusTotal */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span>VIRUSTOTAL v3</span>
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="font-medium">VirusTotal</span>
             <span
-              className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                 intel.virusTotal.positives > 0
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
               }`}
             >
-              {intel.virusTotal.positives > 0 ? 'FLAGGED' : 'CLEAN'}
+              {intel.virusTotal.positives > 0 ? 'Flagged' : 'Clean'}
             </span>
           </div>
-          <div className="text-xl font-mono font-extrabold text-slate-100">
-            {intel.virusTotal.positives} / {intel.virusTotal.total}
+          <div className="text-2xl font-bold font-mono text-slate-100">
+            {intel.virusTotal.positives} <span className="text-xs font-sans font-normal text-slate-500">/ {intel.virusTotal.total || 70} vendors</span>
           </div>
-          <div className="text-xs font-sans text-slate-400 mt-1">
-            AV vendors flagged as malicious/suspicious
+          <div className="text-xs text-slate-400 mt-1">
+            Antivirus engine detections
           </div>
         </div>
 
         {/* Feed 2: URLhaus (Abuse.ch) */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span>URLHAUS (ABUSE.CH)</span>
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="font-medium">URLhaus (Abuse.ch)</span>
             <span
-              className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                 intel.urlhaus.detected
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
               }`}
             >
-              {intel.urlhaus.detected ? 'CONFIRMED MALWARE' : 'NOT LISTED'}
+              {intel.urlhaus.detected ? 'Malware Listed' : 'Not Listed'}
             </span>
           </div>
-          <div className="text-base font-mono font-bold text-slate-100 truncate">
-            {intel.urlhaus.threat || 'No Active Threat'}
+          <div className="text-base font-semibold text-slate-100 truncate">
+            {intel.urlhaus.threat || 'Clean / Unlisted'}
           </div>
-          <div className="text-xs font-sans text-slate-400 mt-1">
-            Status: <span className="font-mono text-slate-300">{intel.urlhaus.status || 'Clean'}</span>
+          <div className="text-xs text-slate-400 mt-1">
+            Status: <span className="text-slate-300">{intel.urlhaus.status || 'No active campaign'}</span>
           </div>
         </div>
 
         {/* Feed 3: urlscan.io */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span>URLSCAN.IO</span>
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="font-medium">urlscan.io</span>
             <span
-              className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                 intel.urlscan.malicious
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
               }`}
             >
-              {intel.urlscan.malicious ? 'MALICIOUS' : 'UNFLAGGED'}
+              {intel.urlscan.malicious ? 'Malicious' : 'Unflagged'}
             </span>
           </div>
-          <div className="text-base font-mono font-bold text-slate-100 truncate">
-            {intel.urlscan.asn || 'AS-Edge'}
+          <div className="text-base font-semibold text-slate-100 truncate">
+            {intel.urlscan.asn || 'Cloud Infrastructure'}
           </div>
-          <div className="text-xs font-sans text-slate-400 mt-1 truncate">
-            {intel.urlscan.asnName || 'Hosting Infrastructure'}
+          <div className="text-xs text-slate-400 mt-1 truncate">
+            {intel.urlscan.asnName || 'Edge Network'}
           </div>
         </div>
 
         {/* Feed 4: Safe Browsing & PhishTank */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span>GSB & PHISHTANK</span>
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="font-medium">Safe Browsing & PhishTank</span>
             <span
-              className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                 intel.googleSafeBrowsing.detected || intel.phishTank.detected
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
+                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
               }`}
             >
               {intel.googleSafeBrowsing.detected || intel.phishTank.detected
-                ? 'PHISH DETECTED'
-                : 'VERIFIED CLEAR'}
+                ? 'Flagged'
+                : 'Clear'}
             </span>
           </div>
-          <div className="text-base font-mono font-bold text-slate-100">
+          <div className="text-base font-semibold text-slate-100">
             {intel.phishTank.detected ? 'PhishTank Match' : 'Zero Reputation Flags'}
           </div>
-          <div className="text-xs font-sans text-slate-400 mt-1">
+          <div className="text-xs text-slate-400 mt-1">
             GSB: {intel.googleSafeBrowsing.threatTypes.join(', ') || 'Clean'}
           </div>
         </div>
       </div>
 
-      {/* VirusTotal Vendor Engine Matrix Grid */}
-      <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-xl">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
+      {/* Vendor Engine Matrix */}
+      <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
+          <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-sky-400" />
-            <span>VIRUSTOTAL ENGINE DETECTION MATRIX ({intel.virusTotal.positives} FLAGGED)</span>
+            <h3 className="text-sm font-semibold text-slate-100">
+              Antivirus Vendor Analysis ({intel.virusTotal.positives} Flagged)
+            </h3>
           </div>
-          <span className="text-xs font-mono text-slate-400">
-            UPDATED: {new Date(intel.virusTotal.scanDate || Date.now()).toLocaleTimeString()}
+          <span className="text-xs text-slate-400">
+            Scan Timestamp: {new Date(intel.virusTotal.scanDate || Date.now()).toLocaleTimeString()}
           </span>
         </div>
 
@@ -123,14 +125,14 @@ export const ThreatIntelTab: React.FC<ThreatIntelTabProps> = ({ report }) => {
               return (
                 <div
                   key={engine}
-                  className={`p-3 rounded-lg border font-mono text-xs transition-colors ${
+                  className={`p-3 rounded-xl border text-xs transition-colors ${
                     isMalicious
-                      ? 'bg-rose-950/40 border-rose-600/70 text-rose-300'
-                      : 'bg-slate-900/60 border-slate-850 text-slate-400'
+                      ? 'bg-rose-950/20 border-rose-700/40 text-rose-300'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-slate-200 truncate">{engine}</span>
+                    <span className="font-semibold text-slate-200 truncate">{engine}</span>
                     {isMalicious ? (
                       <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                     ) : (
@@ -145,8 +147,8 @@ export const ThreatIntelTab: React.FC<ThreatIntelTabProps> = ({ report }) => {
             })}
           </div>
         ) : (
-          <div className="text-center p-6 font-mono text-xs text-slate-500">
-            No specific vendor breakdown available.
+          <div className="text-center p-8 text-xs text-slate-400">
+            No specific vendor breakdown entries available for this target.
           </div>
         )}
       </div>

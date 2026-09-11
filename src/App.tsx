@@ -8,7 +8,7 @@ import {
   FileCode2,
   History,
   AlertCircle,
-  Terminal,
+  Shield,
 } from 'lucide-react';
 import { Header } from './components/Header.tsx';
 import { DetonationOmnibar } from './components/DetonationOmnibar.tsx';
@@ -86,7 +86,7 @@ export function App() {
       setActiveTab('overview');
       refreshHistory();
     } catch (err: any) {
-      setErrorMessage(err.message || 'Detonation engine encountered an error');
+      setErrorMessage(err.message || 'Security scanner encountered an error');
     } finally {
       setIsScanning(false);
     }
@@ -106,17 +106,17 @@ export function App() {
   };
 
   const tabs = [
-    { id: 'overview', label: 'OVERVIEW', icon: LayoutDashboard },
-    { id: 'sandbox', label: 'DOM SANDBOX & SCREENSHOT', icon: Eye },
-    { id: 'redirects', label: 'REDIRECT CHAIN', icon: GitCommit },
-    { id: 'threatintel', label: 'THREAT INTEL', icon: ShieldAlert },
-    { id: 'heuristics', label: 'ENTROPY & HOMOGLYPHS', icon: Binary },
-    { id: 'rules', label: 'SIEM & IDS RULES', icon: FileCode2 },
-    { id: 'history', label: 'HISTORY & API', icon: History },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'sandbox', label: 'Page Preview & DOM', icon: Eye },
+    { id: 'redirects', label: 'Redirect Chain', icon: GitCommit },
+    { id: 'threatintel', label: 'Threat Intelligence', icon: ShieldAlert },
+    { id: 'heuristics', label: 'Heuristics & Homoglyphs', icon: Binary },
+    { id: 'rules', label: 'Detection Rules', icon: FileCode2 },
+    { id: 'history', label: 'History', icon: History },
   ];
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-slate-200 flex flex-col font-sans selection:bg-sky-500/20 selection:text-sky-300">
+    <div className="min-h-screen bg-[#090d16] text-slate-200 flex flex-col font-sans selection:bg-sky-500/20 selection:text-sky-300">
       {/* Header */}
       <Header
         onOpenSettings={() => setSettingsOpen(true)}
@@ -124,19 +124,19 @@ export function App() {
       />
 
       {/* Main Workspace Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Omnibar Input */}
         <DetonationOmnibar onScan={handleScan} isScanning={isScanning} />
 
-        {/* Real-time Detonation Pipeline Progress */}
+        {/* Real-time Scan Progress */}
         <ScanProgressStepper isScanning={isScanning} />
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-600/80 text-rose-300 flex items-start gap-3 text-xs font-mono">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+          <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-800/60 text-rose-300 flex items-start gap-3 text-sm">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-400" />
             <div>
-              <span className="font-bold">DETONATION FAILED:</span> {errorMessage}
+              <span className="font-semibold">Scan Error:</span> {errorMessage}
             </div>
           </div>
         )}
@@ -147,8 +147,8 @@ export function App() {
             {/* Verdict Banner */}
             <VerdictBanner report={currentReport} />
 
-            {/* Tab Navigation Strip */}
-            <div className="flex items-center gap-1.5 border-b border-slate-800 overflow-x-auto pb-1">
+            {/* Tab Navigation Bar */}
+            <div className="flex items-center gap-1.5 p-1 bg-[#0f1422] rounded-xl border border-slate-800/80 overflow-x-auto">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -157,13 +157,13 @@ export function App() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-3.5 py-2.5 rounded-t-lg font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                       isActive
-                        ? 'bg-[#0b101b] text-sky-400 border-t-2 border-t-sky-400 border-x border-slate-800'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                        ? 'bg-slate-800 text-white shadow-sm'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-sky-400' : 'text-slate-500'}`} />
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-sky-400' : 'text-slate-400'}`} />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -189,30 +189,38 @@ export function App() {
           </div>
         )}
 
-        {/* Initial Empty State (When no scan performed yet) */}
+        {/* Initial Empty State */}
         {!currentReport && !isScanning && (
-          <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-10 text-center shadow-xl space-y-4">
-            <div className="inline-flex p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
-              <ShieldAlert className="w-10 h-10" />
+          <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-12 text-center shadow-lg space-y-4 max-w-3xl mx-auto">
+            <div className="inline-flex p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
+              <Shield className="w-8 h-8" />
             </div>
-            <h2 className="text-lg font-mono font-bold text-slate-100 uppercase tracking-wide">
-              STANDALONE SANDBOX READY FOR DETONATION
-            </h2>
-            <p className="text-xs font-sans text-slate-400 max-w-xl mx-auto leading-relaxed">
-              Paste any suspicious link, URL shortener, credential phishing form, or defanged IOC in the
-              omnibar above. Alternatively, select one of the attack presets to simulate an active threat
-              detonation.
+            <h3 className="text-lg font-semibold text-slate-100 tracking-tight">
+              Ready to analyze a suspicious link
+            </h3>
+            <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+              Submit any URL, short link, or defanged indicator above to evaluate it with our machine learning classifier, threat reputation engines, and DOM sandbox.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <button
                 onClick={() =>
                   handleScan(
-                    'hxxps://login-microsoft365[.]security-update-token[.]xyz/auth/verify?session=live'
+                    'http://paypal-verification-account-sec.top/login.php'
                   )
                 }
-                className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-750 text-xs font-mono text-sky-400 hover:text-sky-300 transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-sky-300 hover:text-white transition-colors cursor-pointer"
               >
-                RUN SAMPLE M365 PHISHING DETONATION
+                Try Phishing Sample
+              </button>
+              <button
+                onClick={() =>
+                  handleScan(
+                    'https://en.wikipedia.org/wiki/Computer_security'
+                  )
+                }
+                className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer"
+              >
+                Try Safe Domain
               </button>
             </div>
           </div>
@@ -220,13 +228,10 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 bg-[#0b101b] py-4 px-6 text-center text-xs font-mono text-slate-500 mt-auto">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>SPIDER-LINKGUARD v1.0.0 • AUTONOMOUS MALWARE DETONATION PLATFORM</span>
-          <span className="flex items-center gap-1.5 text-slate-400">
-            <Terminal className="w-3.5 h-3.5 text-sky-400" />
-            COMPANION TO ZAK'S SPIDER SECOPS WORKSTATION
-          </span>
+      <footer className="border-t border-slate-800/80 bg-[#0a0f1d] py-5 px-6 text-xs text-slate-500 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="text-slate-400">Spider-LinkGuard — Automated URL Threat Intelligence & Sandbox Platform</span>
+          <span className="text-slate-500">Standalone cybersecurity research microservice</span>
         </div>
       </footer>
 

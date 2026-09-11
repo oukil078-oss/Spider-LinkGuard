@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Key, Shield, Check, Save } from 'lucide-react';
+import { X, Key, Check, Save } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -45,90 +45,89 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, o
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="bg-[#0b101b] border border-slate-750 rounded-xl w-full max-w-lg shadow-2xl p-6 relative">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <div className="bg-[#0f1422] border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl p-6 relative">
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
           <div className="flex items-center gap-2">
             <Key className="w-5 h-5 text-sky-400" />
-            <h3 className="font-mono font-bold text-sm text-slate-100 uppercase tracking-wider">
-              THREAT INTELLIGENCE API CREDENTIALS
+            <h3 className="font-semibold text-base text-slate-100">
+              Threat Intelligence API Keys
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 p-1 rounded hover:bg-slate-800 cursor-pointer transition-colors"
+            className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-xs font-sans text-slate-300 mb-5 leading-relaxed">
-          Optionally provide your own threat intelligence API keys. If keys are omitted,
-          Spider-LinkGuard gracefully utilizes public community endpoints (such as URLhaus Abuse.ch)
-          and local high-fidelity heuristic simulation.
+        <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+          Provide your own API keys for VirusTotal, urlscan.io, and Google Safe Browsing.
+          If keys are omitted, the scanner uses our built-in machine learning classifier and public threat feeds.
         </p>
 
-        <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
+        <form onSubmit={handleSave} className="space-y-4 text-xs">
           <div>
-            <label className="text-slate-400 block mb-1 font-bold">
-              VIRUSTOTAL API v3 KEY:
+            <label className="text-slate-300 block mb-1.5 font-medium">
+              VirusTotal API Key (v3)
             </label>
             <input
               type="password"
               value={vtKey}
               onChange={(e) => setVtKey(e.target.value)}
-              placeholder="e.g. 64-character hexadecimal VT API key"
-              className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded p-2.5 text-slate-200 focus:outline-none placeholder-slate-600"
+              placeholder="e.g. 64-character hexadecimal key"
+              className="w-full bg-slate-950 border border-slate-750 focus:border-sky-500 rounded-xl p-3 text-slate-200 focus:outline-none placeholder-slate-600 font-mono text-xs"
             />
           </div>
 
           <div>
-            <label className="text-slate-400 block mb-1 font-bold">
-              URLSCAN.IO API KEY:
+            <label className="text-slate-300 block mb-1.5 font-medium">
+              urlscan.io API Key
             </label>
             <input
               type="password"
               value={urlscanKey}
               onChange={(e) => setUrlscanKey(e.target.value)}
-              placeholder="e.g. UUID urlscan.io API token"
-              className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded p-2.5 text-slate-200 focus:outline-none placeholder-slate-600"
+              placeholder="e.g. UUID API token"
+              className="w-full bg-slate-950 border border-slate-750 focus:border-sky-500 rounded-xl p-3 text-slate-200 focus:outline-none placeholder-slate-600 font-mono text-xs"
             />
           </div>
 
           <div>
-            <label className="text-slate-400 block mb-1 font-bold">
-              GOOGLE SAFE BROWSING v4 KEY:
+            <label className="text-slate-300 block mb-1.5 font-medium">
+              Google Safe Browsing Key
             </label>
             <input
               type="password"
               value={gsbKey}
               onChange={(e) => setGsbKey(e.target.value)}
-              placeholder="e.g. Google Cloud Safe Browsing API key"
-              className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded p-2.5 text-slate-200 focus:outline-none placeholder-slate-600"
+              placeholder="e.g. Google Cloud API key"
+              className="w-full bg-slate-950 border border-slate-750 focus:border-sky-500 rounded-xl p-3 text-slate-200 focus:outline-none placeholder-slate-600 font-mono text-xs"
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800/80">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 font-mono text-xs border border-slate-800 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs transition-colors cursor-pointer font-medium"
             >
-              CANCEL
+              Cancel
             </button>
 
             <button
               type="submit"
-              className="px-5 py-2 rounded bg-sky-500 hover:bg-sky-400 text-slate-950 font-mono font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-sky-500/20"
+              className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             >
               {saved ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-slate-950" />
-                  <span>SAVED!</span>
+                  <span>Saved</span>
                 </>
               ) : (
                 <>
                   <Save className="w-3.5 h-3.5" />
-                  <span>SAVE SETTINGS</span>
+                  <span>Save Keys</span>
                 </>
               )}
             </button>

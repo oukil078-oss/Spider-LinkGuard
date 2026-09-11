@@ -14,35 +14,35 @@ export const RedirectTab: React.FC<RedirectTabProps> = ({ report }) => {
     <div className="space-y-6">
       {/* Evasion Summary Header */}
       <div
-        className={`rounded-xl border p-5 shadow-lg ${
+        className={`rounded-2xl border p-5 shadow-sm ${
           chain.evasionDetected
-            ? 'bg-rose-950/30 border-rose-600/70 text-rose-300'
-            : 'bg-[#0b101b] border-slate-800 text-slate-300'
+            ? 'bg-rose-950/20 border-rose-800/40 text-rose-200'
+            : 'bg-[#0f1422] border-slate-800/80 text-slate-200'
         }`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             {chain.evasionDetected ? (
-              <AlertTriangle className="w-5 h-5 text-rose-400 animate-pulse" />
+              <AlertTriangle className="w-5 h-5 text-rose-400" />
             ) : (
               <ShieldCheck className="w-5 h-5 text-emerald-400" />
             )}
-            <h3 className="font-mono font-bold text-sm tracking-wider uppercase">
+            <h3 className="font-semibold text-sm">
               {chain.evasionDetected
-                ? 'EVASION / CLOAKING INDICATORS IDENTIFIED'
-                : 'REDIRECT CHAIN TRAVERSED • NORMAL BEHAVIOR'}
+                ? 'Evasion & Cloaking Indicators Identified'
+                : 'Redirect Chain Verified — Standard Routing'}
             </h3>
           </div>
-          <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-bold">
-            {chain.totalHops} {chain.totalHops === 1 ? 'HOP' : 'HOPS TOTAL'}
+          <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-medium">
+            {chain.totalHops} {chain.totalHops === 1 ? 'Hop' : 'Hops Total'}
           </span>
         </div>
 
         {chain.evasionDetected && (
-          <ul className="mt-3 space-y-1.5 text-xs font-sans text-slate-200 list-disc list-inside">
+          <ul className="mt-3 space-y-1 text-xs text-slate-300 list-disc list-inside">
             {chain.evasionReasons.map((reason, idx) => (
               <li key={idx} className="leading-relaxed">
-                <span className="font-mono text-rose-300 font-semibold">{reason}</span>
+                <span className="text-rose-300 font-medium">{reason}</span>
               </li>
             ))}
           </ul>
@@ -50,9 +50,9 @@ export const RedirectTab: React.FC<RedirectTabProps> = ({ report }) => {
       </div>
 
       {/* Visual Hop Pipeline */}
-      <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-xl">
-        <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-6">
-          REDIRECT TRAVERSAL GRAPH & HEADER INSPECTION
+      <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-6 shadow-sm">
+        <h4 className="text-sm font-semibold text-slate-100 mb-6">
+          Redirect Traversal & Response Headers
         </h4>
 
         <div className="space-y-4">
@@ -60,76 +60,71 @@ export const RedirectTab: React.FC<RedirectTabProps> = ({ report }) => {
             const isExpanded = expandedHop === idx;
             const isLast = idx === chain.hops.length - 1;
 
-            const getStatusColor = (code: number) => {
-              if (code >= 200 && code < 300) return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
-              if (code >= 300 && code < 400) return 'bg-sky-500/20 text-sky-300 border-sky-500/40';
-              return 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+            const getStatusBadge = (code: number) => {
+              if (code >= 200 && code < 300) return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25';
+              if (code >= 300 && code < 400) return 'bg-sky-500/10 text-sky-400 border-sky-500/25';
+              return 'bg-rose-500/10 text-rose-400 border-rose-500/25';
             };
 
             return (
               <div key={idx} className="relative">
-                {/* Connector line between hops */}
                 {!isLast && (
-                  <div className="absolute left-5 top-12 bottom-[-16px] w-0.5 bg-slate-800 z-0"></div>
+                  <div className="absolute left-4 top-12 bottom-[-16px] w-0.5 bg-slate-800 z-0" />
                 )}
 
-                <div className="relative z-10 bg-slate-900/90 border border-slate-800 rounded-xl p-4 transition-all hover:border-slate-700">
+                <div className="relative z-10 bg-slate-900/70 border border-slate-800/90 rounded-xl p-4 transition-all hover:border-slate-700">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-950 border border-slate-750 flex items-center justify-center font-mono font-bold text-xs text-sky-400 shrink-0">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-mono font-bold text-xs text-sky-400 shrink-0">
                         #{hop.hopIndex}
                       </div>
 
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`px-2 py-0.5 rounded text-xs font-mono font-bold border ${getStatusColor(
-                              hop.statusCode
-                            )}`}
-                          >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${getStatusBadge(hop.statusCode)}`}>
                             HTTP {hop.statusCode} {hop.statusText}
                           </span>
                           {hop.isMetaRefresh && (
-                            <span className="text-[10px] font-mono bg-purple-950/60 text-purple-300 border border-purple-800 px-1.5 py-0.5 rounded">
-                              META-REFRESH
+                            <span className="text-[11px] bg-purple-950/60 text-purple-300 border border-purple-800/80 px-2 py-0.5 rounded-full">
+                              Meta-Refresh
                             </span>
                           )}
                           {hop.isJsRedirect && (
-                            <span className="text-[10px] font-mono bg-amber-950/60 text-amber-300 border border-amber-800 px-1.5 py-0.5 rounded">
-                              JS LOCATION
+                            <span className="text-[11px] bg-amber-950/60 text-amber-300 border border-amber-800/80 px-2 py-0.5 rounded-full">
+                              JS Location
                             </span>
                           )}
                         </div>
-                        <div className="text-sm font-mono text-slate-200 mt-1 break-all select-all">
+                        <div className="text-xs font-mono text-slate-200 break-all select-all">
                           {hop.url}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs font-mono text-slate-400 shrink-0 self-end md:self-center">
-                      <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-4 text-xs text-slate-400 shrink-0 self-end md:self-center">
+                      <span className="flex items-center gap-1 font-mono">
                         <Clock className="w-3.5 h-3.5 text-slate-500" />
                         {hop.latencyMs}ms
                       </span>
                       <button
                         onClick={() => setExpandedHop(isExpanded ? null : idx)}
-                        className="flex items-center gap-1 text-sky-400 hover:text-sky-300 cursor-pointer"
+                        className="flex items-center gap-1 text-sky-400 hover:text-sky-300 font-medium cursor-pointer"
                       >
-                        <span>{isExpanded ? 'HIDE HEADERS' : 'VIEW HEADERS'}</span>
+                        <span>{isExpanded ? 'Hide Headers' : 'View Headers'}</span>
                         {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                       </button>
                     </div>
                   </div>
 
-                  {/* Expanded Header View */}
+                  {/* Expanded Headers */}
                   {isExpanded && (
-                    <div className="mt-4 pt-3 border-t border-slate-800 text-xs font-mono space-y-2">
-                      <div className="text-[11px] text-slate-500 font-bold uppercase">
-                        RESPONSE HEADERS ({Object.keys(hop.headers).length}):
+                    <div className="mt-4 pt-3 border-t border-slate-800 text-xs space-y-2">
+                      <div className="text-xs text-slate-400 font-medium">
+                        Response Headers ({Object.keys(hop.headers).length}):
                       </div>
-                      <div className="bg-slate-950 rounded-lg p-3 border border-slate-850 overflow-x-auto max-h-60">
+                      <div className="bg-slate-950 rounded-xl p-3 border border-slate-800/80 font-mono text-xs overflow-x-auto max-h-60">
                         {Object.entries(hop.headers).map(([k, v]) => (
-                          <div key={k} className="py-0.5 leading-relaxed">
+                          <div key={k} className="py-0.5">
                             <span className="text-sky-400">{k}:</span>{' '}
                             <span className="text-slate-300">{v}</span>
                           </div>
@@ -138,10 +133,10 @@ export const RedirectTab: React.FC<RedirectTabProps> = ({ report }) => {
 
                       {hop.cookiesSet.length > 0 && (
                         <div className="mt-2">
-                          <span className="text-slate-500 block text-[11px] font-bold uppercase mb-1">
-                            COOKIES ISSUED:
+                          <span className="text-slate-400 font-medium block text-xs mb-1">
+                            Cookies Set:
                           </span>
-                          <div className="bg-slate-950 rounded p-2 border border-slate-850 text-amber-300">
+                          <div className="bg-slate-950 rounded-xl p-2.5 border border-slate-800/80 text-amber-300 font-mono text-xs">
                             {hop.cookiesSet.join(' | ')}
                           </div>
                         </div>

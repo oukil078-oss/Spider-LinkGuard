@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, Loader2, CircleDot } from 'lucide-react';
+import { CheckCircle2, Loader2, Circle } from 'lucide-react';
 
 interface ScanProgressStepperProps {
   isScanning: boolean;
 }
 
 const STEPS = [
-  { id: 1, title: 'URL Normalizer', detail: 'De-fanging, Homoglyph check, Shannon entropy' },
-  { id: 2, title: 'Threat Intelligence', detail: 'URLhaus, VirusTotal, urlscan, GSB ingestion' },
-  { id: 3, title: 'Redirect Traversal', detail: 'HTTP 3xx chain, Meta-Refresh, Evasion analysis' },
-  { id: 4, title: 'DOM Sandbox', detail: 'Headless Chromium, Credential harvester & HAR' },
-  { id: 5, title: 'Scoring Matrix', detail: 'Weighted 0-100 risk score & SIEM rules' },
+  { id: 1, title: 'URL Analysis', detail: 'Defanging, homoglyphs & entropy' },
+  { id: 2, title: 'Threat Intelligence', detail: 'URLhaus, VirusTotal & Google Safe Browsing' },
+  { id: 3, title: 'Redirects', detail: 'HTTP redirect chain & evasion checks' },
+  { id: 4, title: 'Sandbox Execution', detail: 'Headless DOM render & form inspection' },
+  { id: 5, title: 'Risk Scoring', detail: 'Kaggle ML classifier & SIEM rules' },
 ];
 
 export const ScanProgressStepper: React.FC<ScanProgressStepperProps> = ({ isScanning }) => {
@@ -24,7 +24,7 @@ export const ScanProgressStepper: React.FC<ScanProgressStepperProps> = ({ isScan
 
     const interval = setInterval(() => {
       setCurrentStep((prev) => (prev < 5 ? prev + 1 : prev));
-    }, 750);
+    }, 700);
 
     return () => clearInterval(interval);
   }, [isScanning]);
@@ -32,20 +32,20 @@ export const ScanProgressStepper: React.FC<ScanProgressStepperProps> = ({ isScan
   if (!isScanning) return null;
 
   return (
-    <div className="bg-[#0b101b] border border-sky-900/50 rounded-xl p-5 shadow-2xl animate-in fade-in duration-300">
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+    <div className="bg-[#0f1422] border border-slate-800 rounded-2xl p-5 shadow-lg animate-in fade-in duration-300">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
         <div className="flex items-center gap-2">
           <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
-          <span className="text-xs font-mono font-bold text-sky-300 uppercase tracking-wider">
-            DETONATION ENGINE RUNNING • ACTIVE PIPELINE
+          <span className="text-sm font-medium text-slate-200">
+            Analyzing target URL...
           </span>
         </div>
-        <span className="text-xs font-mono text-slate-400">
-          STAGE {currentStep} OF {STEPS.length}
+        <span className="text-xs text-slate-400 font-medium">
+          Step {currentStep} of {STEPS.length}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
         {STEPS.map((step) => {
           const isDone = step.id < currentStep;
           const isCurrent = step.id === currentStep;
@@ -53,31 +53,31 @@ export const ScanProgressStepper: React.FC<ScanProgressStepperProps> = ({ isScan
           return (
             <div
               key={step.id}
-              className={`p-3 rounded-lg border transition-all ${
+              className={`p-3 rounded-xl border transition-all ${
                 isCurrent
-                  ? 'bg-sky-950/40 border-sky-500/70 shadow-lg shadow-sky-500/10'
+                  ? 'bg-sky-950/30 border-sky-500/50'
                   : isDone
-                  ? 'bg-slate-900/90 border-emerald-800/40'
-                  : 'bg-slate-900/30 border-slate-850 opacity-60'
+                  ? 'bg-slate-900/60 border-emerald-900/40'
+                  : 'bg-slate-900/20 border-slate-800/50 opacity-50'
               }`}
             >
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-1">
                 {isDone ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 ) : isCurrent ? (
-                  <Loader2 className="w-4 h-4 text-sky-400 animate-spin shrink-0" />
+                  <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin shrink-0" />
                 ) : (
-                  <CircleDot className="w-4 h-4 text-slate-600 shrink-0" />
+                  <Circle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                 )}
                 <span
-                  className={`text-xs font-mono font-bold truncate ${
+                  className={`text-xs font-medium truncate ${
                     isCurrent ? 'text-sky-300' : isDone ? 'text-emerald-300' : 'text-slate-400'
                   }`}
                 >
                   {step.title}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans leading-relaxed line-clamp-2">
+              <p className="text-[11px] text-slate-400 leading-snug line-clamp-2">
                 {step.detail}
               </p>
             </div>

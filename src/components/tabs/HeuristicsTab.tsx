@@ -7,35 +7,35 @@ interface HeuristicsTabProps {
 }
 
 export const HeuristicsTab: React.FC<HeuristicsTabProps> = ({ report }) => {
-  const { entropy, homoglyphs, normalization } = report;
+  const { entropy, homoglyphs } = report;
 
   return (
     <div className="space-y-6">
-      {/* Shannon Entropy Meters Grid */}
+      {/* Shannon Entropy Meters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Query Entropy */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span className="flex items-center gap-1.5">
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="flex items-center gap-1.5 font-medium">
               <Binary className="w-3.5 h-3.5 text-sky-400" />
-              QUERY PARAMETER ENTROPY
+              Query Parameters Entropy
             </span>
             <span
-              className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
                 entropy.queryEntropy > 4.5
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
                   : 'bg-slate-800 text-slate-300'
               }`}
             >
-              {entropy.queryEntropy > 4.5 ? 'HIGH ENTROPY' : 'NORMAL'}
+              {entropy.queryEntropy > 4.5 ? 'High Entropy' : 'Normal'}
             </span>
           </div>
 
-          <div className="text-3xl font-mono font-black text-slate-100 my-2">
+          <div className="text-3xl font-bold font-mono text-slate-100 my-2">
             {entropy.queryEntropy} <span className="text-xs font-normal text-slate-500">bits/byte</span>
           </div>
 
-          <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-850">
+          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
             <div
               className={`h-full ${
                 entropy.queryEntropy > 4.5 ? 'bg-rose-500' : 'bg-sky-500'
@@ -43,28 +43,28 @@ export const HeuristicsTab: React.FC<HeuristicsTabProps> = ({ report }) => {
               style={{ width: `${Math.min(100, (entropy.queryEntropy / 8) * 100)}%` }}
             />
           </div>
-          <div className="text-[11px] font-mono text-slate-500 mt-2">
-            Threshold: &gt; 4.5 indicates encrypted/token payload
+          <div className="text-xs text-slate-400 mt-2">
+            Values &gt; 4.5 indicate encrypted tokens or obfuscated payloads
           </div>
         </div>
 
         {/* Path Entropy */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span className="flex items-center gap-1.5">
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="flex items-center gap-1.5 font-medium">
               <Binary className="w-3.5 h-3.5 text-emerald-400" />
-              PATH SEGMENT ENTROPY
+              Path Segment Entropy
             </span>
-            <span className="text-xs font-mono text-slate-400">
-              {entropy.pathEntropy > 4.2 ? 'ELEVATED' : 'STANDARD'}
+            <span className="text-xs text-slate-400">
+              {entropy.pathEntropy > 4.2 ? 'Elevated' : 'Standard'}
             </span>
           </div>
 
-          <div className="text-3xl font-mono font-black text-slate-100 my-2">
+          <div className="text-3xl font-bold font-mono text-slate-100 my-2">
             {entropy.pathEntropy} <span className="text-xs font-normal text-slate-500">bits/byte</span>
           </div>
 
-          <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-850">
+          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
             <div
               className={`h-full ${
                 entropy.pathEntropy > 4.2 ? 'bg-amber-500' : 'bg-emerald-500'
@@ -72,28 +72,28 @@ export const HeuristicsTab: React.FC<HeuristicsTabProps> = ({ report }) => {
               style={{ width: `${Math.min(100, (entropy.pathEntropy / 8) * 100)}%` }}
             />
           </div>
-          <div className="text-[11px] font-mono text-slate-500 mt-2">
-            Measures randomness in URI path structure
+          <div className="text-xs text-slate-400 mt-2">
+            Measures character randomness in URI path elements
           </div>
         </div>
 
         {/* Full URL Entropy */}
-        <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-lg">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-            <span className="flex items-center gap-1.5">
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span className="flex items-center gap-1.5 font-medium">
               <Gauge className="w-3.5 h-3.5 text-purple-400" />
-              AGGREGATE URL ENTROPY
+              Aggregate URL Entropy
             </span>
-            <span className="text-xs font-mono text-slate-400">
-              {entropy.fullUrlEntropy > 4.6 ? 'HIGH' : 'BALANCED'}
+            <span className="text-xs text-slate-400">
+              {entropy.fullUrlEntropy > 4.6 ? 'High' : 'Balanced'}
             </span>
           </div>
 
-          <div className="text-3xl font-mono font-black text-slate-100 my-2">
+          <div className="text-3xl font-bold font-mono text-slate-100 my-2">
             {entropy.fullUrlEntropy} <span className="text-xs font-normal text-slate-500">bits/byte</span>
           </div>
 
-          <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-850">
+          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
             <div
               className={`h-full ${
                 entropy.fullUrlEntropy > 4.6 ? 'bg-rose-500' : 'bg-purple-500'
@@ -101,55 +101,57 @@ export const HeuristicsTab: React.FC<HeuristicsTabProps> = ({ report }) => {
               style={{ width: `${Math.min(100, (entropy.fullUrlEntropy / 8) * 100)}%` }}
             />
           </div>
-          <div className="text-[11px] font-mono text-slate-500 mt-2">
-            Global character set distribution Shannon test
+          <div className="text-xs text-slate-400 mt-2">
+            Comprehensive character set distribution Shannon test
           </div>
         </div>
       </div>
 
-      {/* Entropy Findings Notes */}
-      <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-4">
-        <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-2">
-          ENTROPY ANALYSIS FINDINGS
-        </h4>
-        <ul className="space-y-1 text-xs font-mono text-slate-300">
-          {entropy.analysisNotes.map((note, idx) => (
-            <li key={idx} className="flex items-start gap-2">
-              <span className="text-sky-400">•</span>
-              <span>{note}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Entropy Notes */}
+      {entropy.analysisNotes.length > 0 && (
+        <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+          <h4 className="text-sm font-semibold text-slate-100 mb-2">
+            Entropy Observations
+          </h4>
+          <ul className="space-y-1.5 text-xs text-slate-300">
+            {entropy.analysisNotes.map((note, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <span className="text-sky-400 mt-0.5">•</span>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Homoglyph & Typosquatting Section */}
-      <div className="bg-[#0b101b] border border-slate-800 rounded-xl p-5 shadow-xl">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
+      <div className="bg-[#0f1422] border border-slate-800/80 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
             <SpellCheck className="w-4 h-4 text-sky-400" />
-            <span>HOMOGLYPH & TYPOSQUATTING BRAND IMPERSONATION INSPECTOR</span>
+            <span>Homoglyph & Unicode Typosquatting Analysis</span>
           </div>
 
           <span
-            className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold border uppercase ${
+            className={`px-3 py-0.5 rounded-full text-xs font-semibold border ${
               homoglyphs.hasHomoglyphs
-                ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
+                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
             }`}
           >
-            {homoglyphs.hasHomoglyphs ? 'CONFUSABLES DETECTED' : 'CLEAN UNICODE'}
+            {homoglyphs.hasHomoglyphs ? 'Lookalikes Detected' : 'Clean Unicode'}
           </span>
         </div>
 
         <div className="mb-4">
-          <p className="text-sm font-sans text-slate-200 leading-relaxed">
+          <p className="text-sm text-slate-300 leading-relaxed">
             {homoglyphs.explanation}
           </p>
           {homoglyphs.spoofedBrand && (
-            <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded bg-rose-950/60 border border-rose-800 text-rose-300 text-xs font-mono">
-              <AlertTriangle className="w-3.5 h-3.5" />
+            <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs">
+              <AlertTriangle className="w-4 h-4 text-rose-400" />
               <span>
-                TARGET BRAND SPOOFED: <strong>{homoglyphs.spoofedBrand.toUpperCase()}</strong>
+                Target Brand Spoofed: <strong className="uppercase">{homoglyphs.spoofedBrand}</strong>
               </span>
             </div>
           )}
@@ -157,23 +159,23 @@ export const HeuristicsTab: React.FC<HeuristicsTabProps> = ({ report }) => {
 
         {homoglyphs.hasHomoglyphs && homoglyphs.details.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full text-left font-mono text-xs">
-              <thead className="border-b border-slate-800 text-slate-400">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-slate-800 text-slate-400 font-medium">
                 <tr>
-                  <th className="py-2.5 px-3">INDEX</th>
-                  <th className="py-2.5 px-3">CHARACTER</th>
-                  <th className="py-2.5 px-3">UNICODE</th>
-                  <th className="py-2.5 px-3">LATIN COUNTERPART</th>
-                  <th className="py-2.5 px-3">DESCRIPTION</th>
+                  <th className="py-2.5 px-3">Position</th>
+                  <th className="py-2.5 px-3">Character</th>
+                  <th className="py-2.5 px-3">Unicode Code Point</th>
+                  <th className="py-2.5 px-3">Latin Equivalent</th>
+                  <th className="py-2.5 px-3">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-850">
+              <tbody className="divide-y divide-slate-800/60">
                 {homoglyphs.details.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-900/60">
-                    <td className="py-2.5 px-3 font-bold text-slate-400">#{item.index}</td>
-                    <td className="py-2.5 px-3 text-lg text-rose-400 font-bold">{item.char}</td>
-                    <td className="py-2.5 px-3 text-sky-400 font-semibold">{item.unicode}</td>
-                    <td className="py-2.5 px-3 text-emerald-400 font-bold">{item.latinEquivalent}</td>
+                  <tr key={idx} className="hover:bg-slate-900/40">
+                    <td className="py-2.5 px-3 text-slate-400 font-mono">#{item.index}</td>
+                    <td className="py-2.5 px-3 text-base text-rose-400 font-bold">{item.char}</td>
+                    <td className="py-2.5 px-3 text-sky-400 font-mono">{item.unicode}</td>
+                    <td className="py-2.5 px-3 text-emerald-400 font-semibold">{item.latinEquivalent}</td>
                     <td className="py-2.5 px-3 text-slate-300">{item.description}</td>
                   </tr>
                 ))}
